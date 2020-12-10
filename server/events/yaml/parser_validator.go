@@ -17,11 +17,18 @@ import (
 )
 
 // AtlantisYAMLFilename is the name of the config file for each repo.
-const AtlantisYAMLFilename = "atlantis.yaml"
+var AtlantisYAMLFilename string
 
 // ParserValidator parses and validates server-side repo config files and
 // repo-level atlantis.yaml files.
-type ParserValidator struct{}
+type ParserValidator struct {
+	AtlantisYAMLFilename string
+}
+
+// SetRepoCfg Set the atlantis yaml filename
+func (p *ParserValidator) SetRepoCfg(atlantisYamlFile string) {
+	AtlantisYAMLFilename = p.AtlantisYAMLFilename
+}
 
 // HasRepoCfg returns true if there is a repo config (atlantis.yaml) file
 // for the repo at absRepoDir.

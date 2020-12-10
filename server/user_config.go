@@ -71,6 +71,8 @@ type UserConfig struct {
 	DefaultTFVersion       string          `mapstructure:"default-tf-version"`
 	Webhooks               []WebhookConfig `mapstructure:"webhooks"`
 	WriteGitCreds          bool            `mapstructure:"write-git-creds"`
+	AtlantisYamlFile       string          `mapstructure:"atlantis-yaml-file"`
+	ServerID               string          `mapstructure:"server-id"`
 }
 
 // ToLogLevel returns the LogLevel object corresponding to the user-passed

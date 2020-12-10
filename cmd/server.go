@@ -92,6 +92,8 @@ const (
 	TFEHostnameFlag            = "tfe-hostname"
 	TFETokenFlag               = "tfe-token"
 	WriteGitCredsFlag          = "write-git-creds"
+	ServerIDFlag               = "server-id"
+	AtlantisYamlFile           = "atlantis-yaml-file"
 
 	// NOTE: Must manually set these as defaults in the setDefaults function.
 	DefaultADBasicUser      = ""
@@ -106,6 +108,8 @@ const (
 	DefaultTFDownloadURL    = "https://releases.hashicorp.com"
 	DefaultTFEHostname      = "app.terraform.io"
 	DefaultVCSStatusName    = "atlantis"
+	DefaultAtlantisYamlFile = "atlantis.yaml"
+	DefaultServerID         = ""
 )
 
 var stringFlags = map[string]stringFlag{
@@ -254,6 +258,14 @@ var stringFlags = map[string]stringFlag{
 	VCSStatusName: {
 		description:  "Name used to identify Atlantis for pull request statuses.",
 		defaultValue: DefaultVCSStatusName,
+	},
+	AtlantisYamlFile: {
+		description:  "Custom yaml file name for repo level config",
+		defaultValue: DefaultAtlantisYamlFile,
+	},
+	ServerIDFlag: {
+		description:  "When multiple atlantis atlantis servers are used in the same repo",
+		defaultValue: DefaultServerID,
 	},
 }
 
@@ -570,6 +582,13 @@ func (s *ServerCmd) setDefaults(c *server.UserConfig) {
 	if c.TFEHostname == "" {
 		c.TFEHostname = DefaultTFEHostname
 	}
+	if c.AtlantisYamlFile == "" {
+		c.AtlantisYamlFile = DefaultAtlantisYamlFile
+	}
+	if c.ServerID == "" {
+		c.ServerID = DefaultServerID
+	}
+
 }
 
 func (s *ServerCmd) validate(userConfig server.UserConfig) error {
@@ -585,6 +604,10 @@ func (s *ServerCmd) validate(userConfig server.UserConfig) error {
 
 	if (userConfig.SSLKeyFile == "") != (userConfig.SSLCertFile == "") {
 		return fmt.Errorf("--%s and --%s are both required for ssl", SSLKeyFileFlag, SSLCertFileFlag)
+	}
+
+	if (userConfig.AtlantisYamlFile == "atlantis.yaml") != (userConfig.ServerID == "") {
+		return fmt.Errorf("--%s and --%s are both required for multi server setup", AtlantisYamlFile, ServerIDFlag)
 	}
 
 	// The following combinations are valid.
