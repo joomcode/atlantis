@@ -1,3 +1,11 @@
+# building atlantis binary
+FROM circleci/golang:1.14 AS build
+WORKDIR /src
+USER root
+ENV XC_ARCH=amd64 XC_OS=linux
+COPY . .
+RUN scripts/binary-release.sh
+
 # The runatlantis/atlantis-base is created by docker-base/Dockerfile.
 FROM runatlantis/atlantis-base:v3.5
 LABEL authors="Anubhav Mishra, Luke Kysow"
@@ -20,7 +28,7 @@ RUN AVAILABLE_TERRAFORM_VERSIONS="0.8.8 0.9.11 0.10.8 0.11.14 0.12.29 ${DEFAULT_
     ln -s /usr/local/bin/tf/versions/${DEFAULT_TERRAFORM_VERSION}/terraform /usr/local/bin/terraform
 
 # copy binary
-COPY atlantis /usr/local/bin/atlantis
+COPY --from=build /src/output/linux_amd64 /usr/local/bin/atlantis
 
 # copy docker entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
