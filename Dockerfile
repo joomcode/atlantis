@@ -33,7 +33,7 @@ COPY --from=vault /bin/vault /bin/vault
 RUN apk add --no-cache jq
 
 # copy binary
-COPY --from=build /src/output/linux_amd64 /usr/local/bin/atlantis
+COPY --from=build /src/output/linux_amd64 /usr/local/bin
 
 # copy docker entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
