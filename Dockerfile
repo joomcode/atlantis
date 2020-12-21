@@ -6,6 +6,8 @@ ENV XC_ARCH=amd64 XC_OS=linux
 COPY . .
 RUN scripts/binary-release.sh
 
+FROM vault:1.4.2 as vault
+
 # The runatlantis/atlantis-base is created by docker-base/Dockerfile.
 FROM runatlantis/atlantis-base:v3.5
 LABEL authors="Anubhav Mishra, Luke Kysow"
@@ -26,6 +28,9 @@ RUN AVAILABLE_TERRAFORM_VERSIONS="0.8.8 0.9.11 0.10.8 0.11.14 0.12.29 ${DEFAULT_
         rm terraform_${VERSION}_SHA256SUMS; \
     done && \
     ln -s /usr/local/bin/tf/versions/${DEFAULT_TERRAFORM_VERSION}/terraform /usr/local/bin/terraform
+
+COPY --from=vault /bin/vault /bin/vault
+RUN apk add --no-cache jq
 
 # copy binary
 COPY --from=build /src/output/linux_amd64 /usr/local/bin/atlantis
