@@ -301,24 +301,30 @@ func (e *CommentParser) buildFlags(repoRelDir string, workspace string, project 
 		repoRelDir = fmt.Sprintf("%q", repoRelDir)
 	}
 
+	serverIDFlag := ""
+	if e.ServerID != "" {
+		// If ServerID is set, we need to add a flag to all commands to differentiate between instances
+		serverIDFlag = fmt.Sprintf(" -%s %s", serveridFlagShort, e.ServerID)
+	}
+
 	switch {
 	// If project is specified we can just use its name.
 	case project != "":
-		return fmt.Sprintf(" -%s %s", projectFlagShort, project)
+		return fmt.Sprintf("%s -%s %s", serverIDFlag, projectFlagShort, project)
 	case repoRelDir == DefaultRepoRelDir && workspace == DefaultWorkspace:
 		// If it's the root and default workspace then we just need to specify one
 		// of the flags and the other will get defaulted.
-		return fmt.Sprintf(" -%s %s", dirFlagShort, DefaultRepoRelDir)
+		return fmt.Sprintf("%s -%s %s", serverIDFlag, dirFlagShort, DefaultRepoRelDir)
 	case repoRelDir == DefaultRepoRelDir:
 		// If dir is the default then we just need to specify workspace.
-		return fmt.Sprintf(" -%s %s", workspaceFlagShort, workspace)
+		return fmt.Sprintf("%s -%s %s", serverIDFlag, workspaceFlagShort, workspace)
 	case workspace == DefaultWorkspace:
 		// If workspace is the default then we just need to specify the dir.
 
-		return fmt.Sprintf(" -%s %s", dirFlagShort, repoRelDir)
+		return fmt.Sprintf("%s -%s %s", serverIDFlag, dirFlagShort, repoRelDir)
 	default:
 		// Otherwise we have to specify both flags.
-		return fmt.Sprintf(" -%s %s -%s %s", dirFlagShort, repoRelDir, workspaceFlagShort, workspace)
+		return fmt.Sprintf("%s -%s %s -%s %s", serverIDFlag, dirFlagShort, repoRelDir, workspaceFlagShort, workspace)
 	}
 }
 
