@@ -35,3 +35,8 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["server"]
+
+# Store images 90 days after last pull
+LABEL com.joom.retention.pullProtectDays=90
+# Store images 90 days by default
+LABEL com.joom.retention.maxDays=90
