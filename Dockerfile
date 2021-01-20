@@ -32,6 +32,10 @@ RUN AVAILABLE_TERRAFORM_VERSIONS="0.8.8 0.9.11 0.10.8 0.11.14 0.12.29 ${DEFAULT_
 COPY --from=vault /bin/vault /bin/vault
 RUN apk add --no-cache jq
 
+ENV TERRAGRUNT_VERSION=0.27.1
+RUN curl -Ls https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 -o /usr/local/bin/terragrunt && \
+    chmod +x /usr/local/bin/terragrunt
+
 # copy binary
 COPY --from=build /src/output/linux_amd64 /usr/local/bin
 
